@@ -10,13 +10,15 @@ PostListWidget::PostListWidget(QWidget *parent)
     , ui(new Ui::PostListWidget)
 {
     ui->setupUi(this);
-    qDebug() << "AllPostWidget constructor";
-    for (int i = 0; i < 10; i++) ui->scrollAreaWidgetContents->layout()->addWidget(new PostListItemWidget);
-
-    ui->scrollAreaWidgetContents->layout()->addItem(new QSpacerItem(20, 244, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    ui->listWidget->setLayout(new QVBoxLayout());
 }
 
 PostListWidget::~PostListWidget()
 {
     delete ui;
+}
+
+// public
+void PostListWidget::addPostListItem(PostListItemWidget *postListItemWidget) {
+    ui->listWidget->layout()->addWidget(postListItemWidget);
 }

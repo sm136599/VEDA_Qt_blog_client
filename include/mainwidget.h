@@ -3,6 +3,9 @@
 
 #include <QWidget>
 
+class PostListWidget;
+class PostWidget;
+
 namespace Ui {
 class MainWidget;
 }
@@ -17,6 +20,17 @@ public:
 
 private:
     Ui::MainWidget *ui;
+    
+    QString username;
+
+    PostListWidget *postListWidget;
+    PostWidget *postWidget;
+
+    void setLayoutForStackedWidget();
+    void updateForGuest();
+    void updateForMember();
+    void updateForAdmin();
+    void setUserLabel();
 };
 
 #endif // MAINWIDGET_H

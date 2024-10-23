@@ -100,7 +100,12 @@ border: none;
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QPushButton" name="homeButton">
+          <widget class="QLabel" name="userLabel">
+           <property name="font">
+            <font>
+             <pointsize>24</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Blog</string>
            </property>
@@ -137,13 +142,6 @@ border: none;
           <widget class="QPushButton" name="newPostButton">
            <property name="text">
             <string>새글 작성</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="userButton">
-           <property name="text">
-            <string>사용자</string>
            </property>
           </widget>
          </item>
