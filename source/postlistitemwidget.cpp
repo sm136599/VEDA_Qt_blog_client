@@ -10,12 +10,12 @@ PostListItemWidget::PostListItemWidget(QWidget *parent)
     ui->setupUi(this);
 }
 
-PostListItemWidget::PostListItemWidget(const QString &id, const QString &title, const QString &writer, QWidget *parent)
+PostListItemWidget::PostListItemWidget(const int &id, const QString &title, const QString &writer, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::PostListItemWidget)
 {
     ui->setupUi(this);
-    ui->postIdLabel->setText(id);
+    ui->postIdLabel->setText(tr("%1").arg(id));
     ui->postTitleLabel->setText(title);
     ui->postWriterLabel->setText(writer);
 

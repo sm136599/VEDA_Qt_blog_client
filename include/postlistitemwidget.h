@@ -13,7 +13,7 @@ class PostListItemWidget : public QWidget
 
 public:
     explicit PostListItemWidget(QWidget *parent = nullptr);
-    explicit PostListItemWidget(const QString &id, const QString &title, const QString &writer, QWidget *parent = nullptr);
+    explicit PostListItemWidget(const int &id, const QString &title, const QString &writer, QWidget *parent = nullptr);
     ~PostListItemWidget();
 
     
@@ -21,7 +21,7 @@ public:
 private:
     Ui::PostListItemWidget *ui;
 
-    QString id;
+    int id;
     QString title;
     QString writer;
 };

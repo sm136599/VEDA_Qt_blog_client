@@ -1,10 +1,15 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 #include "postlistwidget.h"
+#include "postlistitemwidget.h"
 #include "postwidget.h"
 #include "writepostwidget.h"
 #include "logindialog.h"
 #include "registerdialog.h"
+#include "httpclient.h"
+#include "post.h"
+#include "comment.h"
+
 #include <QDebug>
 
 MainWidget::MainWidget(QWidget *parent)
@@ -12,22 +17,50 @@ MainWidget::MainWidget(QWidget *parent)
     , ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
-    setLayoutForStackedWidget();
+    // 사용자 초기화
     username = "";
+    // 레이아웃 초기화
+    setLayoutForStackedWidget();
+    // 게시물 리스트 위젯 생성
+    postListWidget = new PostListWidget(ui->postListPage);
+    // 게시물 페이지 연결
+    ui->postListPage->layout()->addWidget(postListWidget);
+    
+    // 화면 업데이트
     updateForGuest();
 
-    postListWidget = new PostListWidget(ui->postListPage);
-    ui->postListPage->layout()->addWidget(postListWidget);
+    // 연결 초기화
+    setConnects();
+
+    // 게시물 리스트 업데이트
+    updatePostList();
 }
 
 MainWidget::~MainWidget()
 {
     delete ui;
+    if (postListWidget != nullptr)
+        delete postListWidget;
+    if (postWidget != nullptr)
+        delete postWidget;
 }
 
 // public
 
 // private
+void MainWidget::setConnects() {
+    connect(httpclient, &HttpClient::allPostsFetched, this, [this](QList<Post> postList) {
+        postListWidget->hide();
+        postListWidget->deleteLater();
+        postListWidget = new PostListWidget(ui->postListPage);
+        for (Post& post : postList) {
+            postListWidget->addPostListItem(new PostListItemWidget(post.postNumber, post.subject, post.writer));
+        }
+    });
+
+}
+
+
 void MainWidget::setLayoutForStackedWidget() {
     ui->postListPage->setLayout(new QVBoxLayout());
     ui->postPage->setLayout(new QVBoxLayout());
@@ -44,7 +77,6 @@ void MainWidget::updateForGuest() {
     ui->withdrawButton->hide();
 
     ui->stackedWidget->setCurrentIndex(0);
-    
 }
 
 void MainWidget::updateForMember() {
@@ -73,4 +105,8 @@ void MainWidget::setUserLabel() {
     } else {
         ui->userLabel->setText(username);
     }   
+}
+
+void MainWidget::updatePostList() {
+    httpclient->fetchAllPosts();
 }
