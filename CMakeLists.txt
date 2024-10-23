@@ -29,6 +29,8 @@ set(PROJECT_HEADERS
     include/registerdialog.h
     include/logindialog.h
     include/httpclient.h
+    include/post.h
+    include/comment.h
 )
 
 set(PROJECT_SOURCES

@@ -5,14 +5,18 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+#include "post.h"
+
 #define SERVER_URL "http://localhost:8000"
+#define httpclient HttpClient::getInstance()
 
 class HttpClient : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit HttpClient(QObject *parent = nullptr);
+    static HttpClient* getInstance();
+
     void fetchAllPosts();
     void fetchPostById(int postId);
     void join(const QString &loginId, const QString &password, const QString &passwordCheck, const QString &name);
@@ -26,10 +30,12 @@ public:
     void deleteUser(const QString &user);
 
 signals:
-    void allPostsFetched(QByteArray data);
-    void postFetched(QByteArray data);
-    void joinResponse(QByteArray data);
-    void loginResponse(QByteArray data);
+    void allPostsFetched(QList<Post> postList);
+    void postFetched(Post post);
+    void joinSucceed();
+    void joinFailed(QString message);
+    void loginSucceed();
+    void loginFailed();
     void uploadPostResponse(QByteArray data);
     void editPostResponse(QByteArray data);
     void uploadCommentResponse(QByteArray data);
@@ -52,6 +58,9 @@ private slots:
     void onDeleteUserResponse(QNetworkReply *reply);
 
 private:
+    explicit HttpClient(QObject *parent = nullptr);
+    static HttpClient* instance;
+
     QNetworkAccessManager *networkManager;
     QJsonObject byteArrayToJsonObject(const QByteArray& data);
 };
