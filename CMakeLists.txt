@@ -25,6 +25,7 @@ set(PROJECT_HEADERS
     include/postlistitemwidget.h
     include/postwidget.h
     include/commentwidget.h
+    include/writepostwidget.h
 )
 
 set(PROJECT_SOURCES
@@ -33,6 +34,7 @@ set(PROJECT_SOURCES
     source/postlistitemwidget.cpp
     source/postwidget.cpp
     source/commentwidget.cpp
+    source/writepostwidget.cpp
 )
 
 set(PROJECT_UI
@@ -41,6 +43,7 @@ set(PROJECT_UI
     ui/postlistitemwidget.ui
     ui/postwidget.ui
     ui/commentwidget.ui
+    ui/writepostwidget.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

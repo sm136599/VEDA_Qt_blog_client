@@ -2,6 +2,7 @@
 #include "ui_mainwidget.h"
 #include "postlistwidget.h"
 #include "postwidget.h"
+#include "writepostwidget.h"
 #include <QDebug>
 
 MainWidget::MainWidget(QWidget *parent)
@@ -36,6 +37,10 @@ MainWidget::MainWidget(QWidget *parent)
     ui->postPage->setLayout(new QVBoxLayout);
     ui->postPage->layout()->addWidget(new PostWidget(ui->postPage));
     ui->stackedWidget->setCurrentIndex(1);
+
+    ui->writePostPage->setLayout(new QVBoxLayout);
+    ui->writePostPage->layout()->addWidget(new WritePostWidget(ui->writePostPage));
+    ui->stackedWidget->setCurrentIndex(2);
 }
 
 MainWidget::~MainWidget()
