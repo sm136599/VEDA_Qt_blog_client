@@ -18,9 +18,16 @@ public:
     ~PostListWidget();
 
     void addPostListItem(PostListItemWidget *postListItemWidget);
+    void enableClickEvent();
+    void disableClickEvent();
+
+signals:
+    void postClicked(int postId);
 
 private:
     Ui::PostListWidget *ui;
+
+    QList<PostListItemWidget*> postListItemWidgetList;
 };
 
 #endif // POSTLISTWIDGET_H

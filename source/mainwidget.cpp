@@ -17,6 +17,8 @@ MainWidget::MainWidget(QWidget *parent)
     , ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
+    postWidget = nullptr;
+    postListWidget = nullptr;
     // 사용자 초기화
     username = "";
     // 레이아웃 초기화
@@ -26,14 +28,19 @@ MainWidget::MainWidget(QWidget *parent)
     // 게시물 페이지 연결
     ui->postListPage->layout()->addWidget(postListWidget);
     
+    // 게시물 리스트 업데이트
+    updatePostList();
+
+    for(int i = 0; i < 10; i++) {
+        postListWidget->addPostListItem(new PostListItemWidget(i, "제목", "작성자"));
+    }
+
     // 화면 업데이트
     updateForGuest();
 
     // 연결 초기화
     setConnects();
 
-    // 게시물 리스트 업데이트
-    updatePostList();
 }
 
 MainWidget::~MainWidget()
@@ -57,7 +64,9 @@ void MainWidget::setConnects() {
             postListWidget->addPostListItem(new PostListItemWidget(post.postNumber, post.subject, post.writer));
         }
     });
-
+    connect(postListWidget, &PostListWidget::postClicked, this, [this](int postId) {
+        httpclient->fetchPostById(postId);
+    });
 }
 
 
@@ -75,6 +84,7 @@ void MainWidget::updateForGuest() {
     ui->newPostButton->hide();
     ui->logoutButton->hide();
     ui->withdrawButton->hide();
+    postListWidget->enableClickEvent();
 
     ui->stackedWidget->setCurrentIndex(0);
 }

@@ -16,7 +16,13 @@ public:
     explicit PostListItemWidget(const int &id, const QString &title, const QString &writer, QWidget *parent = nullptr);
     ~PostListItemWidget();
 
+    void setClickable(bool clickable);
+
+signals:
+    void clicked(int postId);
     
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     Ui::PostListItemWidget *ui;
@@ -24,6 +30,8 @@ private:
     int id;
     QString title;
     QString writer;
+
+    bool clickable;
 };
 
 #endif // POSTLISTITEMWIDGET_H
