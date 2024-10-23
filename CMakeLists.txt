@@ -23,18 +23,24 @@ set(PROJECT_HEADERS
     include/mainwidget.h
     include/postlistwidget.h
     include/postlistitemwidget.h
+    include/postwidget.h
+    include/commentwidget.h
 )
 
 set(PROJECT_SOURCES
     source/mainwidget.cpp
     source/postlistwidget.cpp
     source/postlistitemwidget.cpp
+    source/postwidget.cpp
+    source/commentwidget.cpp
 )
 
 set(PROJECT_UI
     ui/mainwidget.ui
     ui/postlistwidget.ui
     ui/postlistitemwidget.ui
+    ui/postwidget.ui
+    ui/commentwidget.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

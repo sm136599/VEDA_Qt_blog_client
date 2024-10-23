@@ -1,6 +1,7 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 #include "postlistwidget.h"
+#include "postwidget.h"
 #include <QDebug>
 
 MainWidget::MainWidget(QWidget *parent)
@@ -15,7 +16,7 @@ MainWidget::MainWidget(QWidget *parent)
     ui->withdrawButton->hide();
 
     connect(ui->loginButton, &QPushButton::clicked, [this](){
-        ui->stackedWidget->setCurrentIndex(0);
+        ui->stackedWidget->setCurrentIndex(1);
         ui->loginButton->hide();
         ui->registerButton->hide();
         ui->newPostButton->show();
@@ -24,13 +25,17 @@ MainWidget::MainWidget(QWidget *parent)
         ui->withdrawButton->show();
         qDebug() << "loginButton clicked";
     });
-    ui->allPostPage->setLayout(new QVBoxLayout);
-    ui->allPostPage->layout()->addWidget(new PostListWidget(ui->allPostPage));
+    ui->postListPage->setLayout(new QVBoxLayout);
+    ui->postListPage->layout()->addWidget(new PostListWidget(ui->postListPage));
     ui->stackedWidget->setCurrentIndex(0);
     connect(ui->homeButton, &QPushButton::clicked, [this](){
         ui->stackedWidget->setCurrentIndex(0);
         qDebug() << "homeButton clicked";
     });
+
+    ui->postPage->setLayout(new QVBoxLayout);
+    ui->postPage->layout()->addWidget(new PostWidget(ui->postPage));
+    ui->stackedWidget->setCurrentIndex(1);
 }
 
 MainWidget::~MainWidget()

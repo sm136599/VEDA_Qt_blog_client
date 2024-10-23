@@ -129,9 +129,9 @@ background-color: white;
       <number>0</number>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
-     <widget class="QWidget" name="allPostPage"/>
+     <widget class="QWidget" name="postListPage"/>
      <widget class="QWidget" name="postPage"/>
      <widget class="QWidget" name="writePostPage"/>
     </widget>
