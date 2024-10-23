@@ -26,6 +26,8 @@ set(PROJECT_HEADERS
     include/postwidget.h
     include/commentwidget.h
     include/writepostwidget.h
+    include/registerdialog.h
+    include/logindialog.h
 )
 
 set(PROJECT_SOURCES
@@ -35,6 +37,8 @@ set(PROJECT_SOURCES
     source/postwidget.cpp
     source/commentwidget.cpp
     source/writepostwidget.cpp
+    source/registerdialog.cpp
+    source/logindialog.cpp
 )
 
 set(PROJECT_UI
@@ -44,6 +48,8 @@ set(PROJECT_UI
     ui/postwidget.ui
     ui/commentwidget.ui
     ui/writepostwidget.ui
+    ui/registerdialog.ui
+    ui/logindialog.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
