@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>676</height>
+    <height>675</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -90,13 +90,13 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-63</y>
+        <y>0</y>
         <width>583</width>
-        <height>697</height>
+        <height>699</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QLabel {
+       <string notr="true">QLineEdit {
 border: 2px solid black;
 border-radius: 15px;
 background-color: white;
@@ -115,15 +115,15 @@ background-color: none;
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1,0">
        <item>
-        <widget class="QLabel" name="titleLabel">
+        <widget class="QLineEdit" name="titleLineEdit">
          <property name="font">
           <font>
            <pointsize>24</pointsize>
            <bold>true</bold>
           </font>
          </property>
-         <property name="text">
-          <string>제목</string>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -213,7 +213,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <set>Qt::TextEditorInteraction</set>
             </property>
             <property name="placeholderText">
-             <string/>
+             <string>댓글을 입력해주세요</string>
             </property>
            </widget>
           </item>

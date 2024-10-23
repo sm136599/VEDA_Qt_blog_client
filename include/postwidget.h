@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "post.h"
 namespace Ui {
 class PostWidget;
 }
@@ -14,16 +15,23 @@ class PostWidget : public QWidget
 
 public:
     explicit PostWidget(QWidget *parent = nullptr);
+    explicit PostWidget(Post post, QString user, QWidget *parent = nullptr);
     ~PostWidget();
+
+    int getPostId();
+
+signals:
+    void back();
+    void editPost(int postId, QString subject, QString description);
+    void deletePost(int postId);
+    void editComment(int commentId, QString description);
+    void deleteComment(int commentId);
 
 private:
     Ui::PostWidget *ui;
 
-    int id;
-    QString title;
-    QString writer;
-    QString description;
-    QVector<CommentWidget> comments; // Each comment has a commentNumber and description
+    Post post;
+    bool isEditing;
 };
 
 #endif // POSTWIDGET_H

@@ -40,7 +40,6 @@ MainWidget::MainWidget(QWidget *parent)
 
     // 연결 초기화
     setConnects();
-
 }
 
 MainWidget::~MainWidget()
@@ -56,6 +55,7 @@ MainWidget::~MainWidget()
 
 // private
 void MainWidget::setConnects() {
+    // 모든 게시물 받아오기
     connect(httpclient, &HttpClient::allPostsFetched, this, [this](QList<Post> postList) {
         postListWidget->hide();
         postListWidget->deleteLater();
@@ -64,8 +64,57 @@ void MainWidget::setConnects() {
             postListWidget->addPostListItem(new PostListItemWidget(post.postNumber, post.subject, post.writer));
         }
     });
+    // 게시물 클릭 
     connect(postListWidget, &PostListWidget::postClicked, this, [this](int postId) {
         httpclient->fetchPostById(postId);
+    });
+    // 게시물 받아오기
+    connect(httpclient, &HttpClient::postFetched, this, [this](Post post) {
+        if (postWidget != nullptr) {
+            postWidget->hide();
+            postWidget->deleteLater();
+        }
+        postWidget = new PostWidget(post, username);
+        ui->postPage->layout()->addWidget(postWidget);
+        ui->stackedWidget->setCurrentIndex(1);
+    });
+    // 게시물 뒤로가기
+    connect(postWidget, &PostWidget::back, this, [this]() {
+        ui->stackedWidget->setCurrentIndex(0);
+    });
+    // 게시물 수정
+    connect(postWidget, &PostWidget::editPost, [this](int postId, QString subject, QString description) {
+        httpclient->editPost(postId, subject, description);
+    });
+    // 게시물 수정 완료 -> 게시물 리스트, 게시물 업데이트
+    connect(httpclient, &HttpClient::editPostResponse, this, [this](QByteArray data) {
+        updatePostList();
+        httpclient->fetchPostById(this->postWidget->getPostId());
+    });
+    // 게시물 삭제
+    connect(postWidget, &PostWidget::deletePost, [this](int postId) {
+        httpclient->deletePost(postId);
+    });
+    // 게시물 삭제 완료 -> 게시물 리스트, 게시물 페이지
+    connect(httpclient, &HttpClient::deletePostResponse, this, [this](QByteArray data) {
+        updatePostList();
+        ui->stackedWidget->setCurrentIndex(0);
+    });
+    // 댓글 수정
+    connect(postWidget, &PostWidget::editComment, [this](int commentId, QString description) {
+        httpclient->editComment(commentId, description);
+    });
+    // 댓글 수정 완료 -> 게시물 다시 받아오기
+    connect(httpclient, &HttpClient::editCommentResponse, this, [this](QByteArray data) {
+        httpclient->fetchPostById(this->postWidget->getPostId());
+    });
+    // 댓글 삭제
+    connect(postWidget, &PostWidget::deleteComment, [this](int commentId) {
+        httpclient->deleteComment(commentId);
+    });
+    // 댓글 삭제 완료 -> 게시물 다시 받아오기
+    connect(httpclient, &HttpClient::deleteCommentResponse, this, [this](QByteArray data) {
+        httpclient->fetchPostById(this->postWidget->getPostId());
     });
 }
 
@@ -84,7 +133,7 @@ void MainWidget::updateForGuest() {
     ui->newPostButton->hide();
     ui->logoutButton->hide();
     ui->withdrawButton->hide();
-    postListWidget->enableClickEvent();
+    postListWidget->disableClickEvent();
 
     ui->stackedWidget->setCurrentIndex(0);
 }
