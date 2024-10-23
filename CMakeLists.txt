@@ -21,14 +21,20 @@ include_directories(
 
 set(PROJECT_HEADERS
     include/mainwidget.h
+    include/postlistwidget.h
+    include/postlistitemwidget.h
 )
 
 set(PROJECT_SOURCES
     source/mainwidget.cpp
+    source/postlistwidget.cpp
+    source/postlistitemwidget.cpp
 )
 
 set(PROJECT_UI
     ui/mainwidget.ui
+    ui/postlistwidget.ui
+    ui/postlistitemwidget.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -49,9 +49,9 @@ border: none;
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QToolButton" name="toolButton">
+       <widget class="QPushButton" name="homeButton">
         <property name="text">
-         <string>BLog</string>
+         <string>Blog</string>
         </property>
        </widget>
       </item>
@@ -129,42 +129,11 @@ background-color: white;
       <number>0</number>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
-     <widget class="QWidget" name="allPostPage">
-      <property name="mouseTracking">
-       <bool>false</bool>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QTableWidget" name="tableWidget">
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <column>
-          <property name="text">
-           <string>글 번호</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>새 행</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>작성자</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <widget class="QWidget" name="allPostPage"/>
      <widget class="QWidget" name="postPage"/>
-     <widget class="QWidget" name="writePage"/>
+     <widget class="QWidget" name="writePostPage"/>
     </widget>
    </item>
   </layout>
