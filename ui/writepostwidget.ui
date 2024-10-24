@@ -18,11 +18,13 @@
 border: 2px solid black;
 border-radius: 15px;
 background-color: white;
+padding: 8px;
 }
 QTextEdit {
 border: 2px solid black;
 border-radius: 15px;
 background-color: white;
+padding: 8px;
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1">
@@ -76,6 +78,7 @@ background-color: white;
      <property name="font">
       <font>
        <pointsize>24</pointsize>
+       <bold>true</bold>
       </font>
      </property>
      <property name="text">

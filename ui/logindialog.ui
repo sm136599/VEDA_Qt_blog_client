@@ -7,70 +7,135 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog &gt; QWidget {
+border: 2px dashed black;
+border-radius: 15px;
+background-color: white;
+}
+QLineEdit {
+border: 2px solid black;
+border-radius: 12px;
+background-color: white;
+padding: 8px;
+}
+QPushButton {
+border: 2px solid black;
+border-radius: 12px;
+background-color: white;
+padding: 8px;
+}
+
+QPushButton:hover {
+background-color: rgb(235, 235, 235);
+}
+
+QPushButton:pressed {
+background-color: rgb(215, 215, 215);
+}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item alignment="Qt::AlignHCenter">
-    <widget class="QLabel" name="titleLabel">
-     <property name="font">
-      <font>
-       <pointsize>24</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>VEDA</string>
-     </property>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item alignment="Qt::AlignHCenter">
+       <widget class="QLabel" name="titleLabel">
+        <property name="font">
+         <font>
+          <pointsize>24</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>VEDA</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="idLabel">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>아이디</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="idLineEdit">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="pwLabel">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>비밀번호</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="pwLineEdit">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="loginStatusLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="backButton">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>뒤로가기</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="loginButton">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>로그인</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="idLabel">
-     <property name="text">
-      <string>아이디</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLineEdit" name="idLineEdit"/>
-   </item>
-   <item>
-    <widget class="QLabel" name="pwLabel">
-     <property name="text">
-      <string>비밀번호</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLineEdit" name="pwLineEdit"/>
-   </item>
-   <item>
-    <widget class="QLabel" name="loginStatusLabel">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="backButton">
-       <property name="text">
-        <string>뒤로가기</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="loginButton">
-       <property name="text">
-        <string>로그인</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>
