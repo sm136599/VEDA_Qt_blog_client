@@ -15,6 +15,10 @@ public:
     explicit LoginDialog(QWidget *parent = nullptr);
     ~LoginDialog();
 
+signals:
+    void loginSucceed(QString username);
+    
+
 private:
     Ui::LoginDialog *ui;
 };

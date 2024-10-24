@@ -164,6 +164,8 @@ void HttpClient::deleteUser(const QString &user)
 void HttpClient::onAllPostsFetched(QNetworkReply *reply)
 {
     if (reply->error() == QNetworkReply::NoError) {
+        qDebug() << "all posts fetched";
+        qDebug() << reply->readAll();
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         
         QJsonArray posts = response["posts"].toArray();
@@ -172,10 +174,10 @@ void HttpClient::onAllPostsFetched(QNetworkReply *reply)
 
         for (const QJsonValue &post : posts) {
             Post postStruct;
-            postStruct.postNumber = post.toObject()["postNumber"].toInt();
-            postStruct.subject = post.toObject()["subject"].toString();
-            postStruct.writer = post.toObject()["writer"].toString();
-            postList.append(postStruct);            
+            postStruct.postNumber = post.toObject()["postID"].toInt();
+            postStruct.subject = post.toObject()["Title"].toString();
+            postStruct.writer = post.toObject()["Writer"].toString();
+            postList.append(postStruct);
         }
 
         emit allPostsFetched(postList);
@@ -223,7 +225,7 @@ void HttpClient::onLoginResponse(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         if (response["user"] != QJsonValue::Null) {
-            emit loginSucceed();
+            emit loginSucceed(response["user"].toString());
         } else {
             emit loginFailed();
         }

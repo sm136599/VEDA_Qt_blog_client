@@ -31,15 +31,18 @@ MainWidget::MainWidget(QWidget *parent)
     // 게시물 리스트 업데이트
     updatePostList();
 
-    for(int i = 0; i < 10; i++) {
-        postListWidget->addPostListItem(new PostListItemWidget(i, "제목", "작성자"));
-    }
+    // for(int i = 0; i < 10; i++) {
+    //     postListWidget->addPostListItem(new PostListItemWidget(i, "제목", "작성자"));
+    // }
 
     // 화면 업데이트
     updateForGuest();
 
     // 연결 초기화
     setConnects();
+
+    // TODO : 로그인, 회원가입 dialog 연결
+    //        새 글 작성 구현
 }
 
 MainWidget::~MainWidget()
@@ -115,6 +118,24 @@ void MainWidget::setConnects() {
     // 댓글 삭제 완료 -> 게시물 다시 받아오기
     connect(httpclient, &HttpClient::deleteCommentResponse, this, [this](QByteArray data) {
         httpclient->fetchPostById(this->postWidget->getPostId());
+    });
+    // 로그인 dialog 연결
+    connect(ui->loginButton, &QPushButton::clicked, this, [this]() {
+        LoginDialog loginDialog;
+        connect(&loginDialog, &LoginDialog::loginSucceed, this, [this](QString username) {
+            if (username == "admin") {
+                updateForAdmin();
+            } else {
+                updateForMember();
+            }
+        });
+        loginDialog.exec();
+    });
+
+    //회원가입 dialog 연결
+    connect(ui->registerButton, &QPushButton::clicked, this, [this]() {
+        RegisterDialog registerDialog;
+        registerDialog.exec();
     });
 }
 

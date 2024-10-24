@@ -7,7 +7,7 @@
 
 #include "post.h"
 
-#define SERVER_URL "http://localhost:8000"
+#define SERVER_URL "http://192.168.0.85:8000"
 #define httpclient HttpClient::getInstance()
 
 class HttpClient : public QObject
@@ -34,7 +34,7 @@ signals:
     void postFetched(Post post);
     void joinSucceed();
     void joinFailed(QString message);
-    void loginSucceed();
+    void loginSucceed(QString username);
     void loginFailed();
     void uploadPostResponse(QByteArray data);
     void editPostResponse(QByteArray data);
