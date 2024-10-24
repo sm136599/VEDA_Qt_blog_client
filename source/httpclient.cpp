@@ -9,7 +9,17 @@ HttpClient* HttpClient::instance = nullptr;
 
 HttpClient::HttpClient(QObject *parent) : QObject(parent)
 {
-    networkManager = new QNetworkAccessManager(this);
+    fetchAllPostsManager = new QNetworkAccessManager(this);
+    fetchPostByIdManager = new QNetworkAccessManager(this);
+    joinManager = new QNetworkAccessManager(this);
+    loginManager = new QNetworkAccessManager(this);
+    uploadPostManager = new QNetworkAccessManager(this);
+    editPostManager = new QNetworkAccessManager(this);
+    uploadCommentManager = new QNetworkAccessManager(this);
+    editCommentManager = new QNetworkAccessManager(this);
+    deletePostManager = new QNetworkAccessManager(this);
+    deleteCommentManager = new QNetworkAccessManager(this);
+    deleteUserManager = new QNetworkAccessManager(this);
 }
 
 HttpClient* HttpClient::getInstance()
@@ -21,7 +31,7 @@ HttpClient* HttpClient::getInstance()
 }
 
 QJsonObject HttpClient::byteArrayToJsonObject(const QByteArray &data)
-{
+{   
     QJsonDocument doc = QJsonDocument::fromJson(data);
     return doc.object();
 }
@@ -29,18 +39,18 @@ QJsonObject HttpClient::byteArrayToJsonObject(const QByteArray &data)
 void HttpClient::fetchAllPosts()
 {
     QNetworkRequest request(QUrl(tr(SERVER_URL) + tr("/get-all-post")));
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onAllPostsFetched);
-    networkManager->get(request);
+    connect(fetchAllPostsManager, &QNetworkAccessManager::finished, this, &HttpClient::onAllPostsFetched);
+    fetchAllPostsManager->get(request);
 }
 
 void HttpClient::fetchPostById(int postId)
 {
     QNetworkRequest request(QUrl(QString(tr(SERVER_URL) + tr("/get-post/%1").arg(postId))));
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onPostFetched);
-    networkManager->get(request);
+    connect(fetchPostByIdManager, &QNetworkAccessManager::finished, this, &HttpClient::onPostFetched);
+    fetchPostByIdManager->get(request);
 }
 
-void HttpClient::join(const QString &loginId, const QString &password, const QString &passwordCheck, const QString &name)
+void HttpClient::join(const QString &loginId, const QString &password, const QString &name)
 {
     QNetworkRequest request(QUrl(tr(SERVER_URL) + tr("/join")));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -48,11 +58,10 @@ void HttpClient::join(const QString &loginId, const QString &password, const QSt
     QJsonObject json;
     json["loginId"] = loginId;
     json["password"] = password;
-    json["passwordCheck"] = passwordCheck;
     json["name"] = name;
 
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onJoinResponse);
-    networkManager->post(request, QJsonDocument(json).toJson());
+    connect(joinManager, &QNetworkAccessManager::finished, this, &HttpClient::onJoinResponse);
+    joinManager->post(request, QJsonDocument(json).toJson());
 }
 
 void HttpClient::login(const QString &loginId, const QString &password)
@@ -64,8 +73,8 @@ void HttpClient::login(const QString &loginId, const QString &password)
     json["loginId"] = loginId;
     json["password"] = password;
 
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onLoginResponse);
-    networkManager->post(request, QJsonDocument(json).toJson());
+    connect(loginManager, &QNetworkAccessManager::finished, this, &HttpClient::onLoginResponse);
+    loginManager->post(request, QJsonDocument(json).toJson());
 }
 
 void HttpClient::uploadPost(const QString &subject, const QString &writer, const QString &description)
@@ -78,8 +87,8 @@ void HttpClient::uploadPost(const QString &subject, const QString &writer, const
     json["writer"] = writer;
     json["description"] = description;
 
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onUploadPostResponse);
-    networkManager->post(request, QJsonDocument(json).toJson());
+    connect(uploadPostManager, &QNetworkAccessManager::finished, this, &HttpClient::onUploadPostResponse);
+    uploadPostManager->post(request, QJsonDocument(json).toJson());
 }
 
 void HttpClient::editPost(int postId, const QString &subject, const QString &description)
@@ -92,8 +101,8 @@ void HttpClient::editPost(int postId, const QString &subject, const QString &des
     json["subject"] = subject;
     json["description"] = description;
 
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onEditPostResponse);
-    networkManager->post(request, QJsonDocument(json).toJson());
+    connect(editPostManager, &QNetworkAccessManager::finished, this, &HttpClient::onEditPostResponse);
+    editPostManager->post(request, QJsonDocument(json).toJson());
 }
 
 void HttpClient::uploadComment(int postId, const QString &writer, const QString &description)
@@ -106,8 +115,8 @@ void HttpClient::uploadComment(int postId, const QString &writer, const QString 
     json["writer"] = writer;
     json["description"] = description;
 
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onUploadCommentResponse);
-    networkManager->post(request, QJsonDocument(json).toJson());
+    connect(uploadCommentManager, &QNetworkAccessManager::finished, this, &HttpClient::onUploadCommentResponse);
+    uploadCommentManager->post(request, QJsonDocument(json).toJson());
 }
 
 void HttpClient::editComment(int commentId, const QString &description)
@@ -119,8 +128,8 @@ void HttpClient::editComment(int commentId, const QString &description)
     json["commentNumber"] = commentId;
     json["description"] = description;
 
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onEditCommentResponse);
-    networkManager->post(request, QJsonDocument(json).toJson());
+    connect(editCommentManager, &QNetworkAccessManager::finished, this, &HttpClient::onEditCommentResponse);
+    editCommentManager->post(request, QJsonDocument(json).toJson());
 }
 
 void HttpClient::deletePost(int postId)
@@ -131,8 +140,8 @@ void HttpClient::deletePost(int postId)
     QJsonObject json;
     json["postNumber"] = postId;
 
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeletePostResponse);
-    networkManager->post(request, QJsonDocument(json).toJson());
+    connect(deletePostManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeletePostResponse);
+    deletePostManager->post(request, QJsonDocument(json).toJson());
 }
 
 void HttpClient::deleteComment(int commentId)
@@ -143,8 +152,8 @@ void HttpClient::deleteComment(int commentId)
     QJsonObject json;
     json["commentNumber"] = commentId;
 
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeleteCommentResponse);
-    networkManager->post(request, QJsonDocument(json).toJson());
+    connect(deleteCommentManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeleteCommentResponse);
+    deleteCommentManager->post(request, QJsonDocument(json).toJson());
 }
 
 void HttpClient::deleteUser(const QString &user)
@@ -155,8 +164,8 @@ void HttpClient::deleteUser(const QString &user)
     QJsonObject json;
     json["user"] = user;
 
-    connect(networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeleteUserResponse);
-    networkManager->post(request, QJsonDocument(json).toJson());
+    connect(deleteUserManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeleteUserResponse);
+    deleteUserManager->post(request, QJsonDocument(json).toJson());
 }
 
 // slots
@@ -221,7 +230,7 @@ void HttpClient::onLoginResponse(QNetworkReply *reply)
 {
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
-        if (response["user"] != QJsonValue::Null) {
+        if (response["user"].toString() != "") {
             emit loginSucceed(response["user"].toString());
         } else {
             emit loginFailed();

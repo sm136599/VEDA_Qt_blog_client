@@ -19,7 +19,7 @@ public:
 
     void fetchAllPosts();
     void fetchPostById(int postId);
-    void join(const QString &loginId, const QString &password, const QString &passwordCheck, const QString &name);
+    void join(const QString &loginId, const QString &password, const QString &name);
     void login(const QString &loginId, const QString &password);
     void uploadPost(const QString &subject, const QString &writer, const QString &description);
     void editPost(int postId, const QString &subject, const QString &description);
@@ -60,8 +60,17 @@ private slots:
 private:
     explicit HttpClient(QObject *parent = nullptr);
     static HttpClient* instance;
-
-    QNetworkAccessManager *networkManager;
+    QNetworkAccessManager *fetchAllPostsManager;
+    QNetworkAccessManager *fetchPostByIdManager;
+    QNetworkAccessManager *joinManager;
+    QNetworkAccessManager *loginManager;
+    QNetworkAccessManager *uploadPostManager;
+    QNetworkAccessManager *editPostManager;
+    QNetworkAccessManager *uploadCommentManager;
+    QNetworkAccessManager *editCommentManager;
+    QNetworkAccessManager *deletePostManager;
+    QNetworkAccessManager *deleteCommentManager;
+    QNetworkAccessManager *deleteUserManager;
     QJsonObject byteArrayToJsonObject(const QByteArray& data);
 };
 
