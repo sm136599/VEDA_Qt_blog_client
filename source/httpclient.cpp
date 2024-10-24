@@ -4,6 +4,11 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QFile>
+#include <QHttpPart>
+#include <QHttpMultiPart>
+#include <QFileInfo>
+#include <QIODevice>
 
 HttpClient* HttpClient::instance = nullptr;
 
@@ -123,7 +128,7 @@ void HttpClient::editComment(int commentId, const QString &description)
 {
     QNetworkRequest request(QUrl(QString(tr(SERVER_URL) + tr("/edit-comment"))));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    
+
     QJsonObject json;
     json["commentNumber"] = commentId;
     json["description"] = description;
@@ -166,6 +171,60 @@ void HttpClient::deleteUser(const QString &user)
 
     connect(deleteUserManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeleteUserResponse);
     deleteUserManager->post(request, QJsonDocument(json).toJson());
+}
+
+void HttpClient::uploadFile(int postId, const QString &filePath) {
+    QFile *file = new QFile(filePath);
+    if (!file->open(QIODevice::ReadOnly)) {
+        emit uploadFileFailed("파일을 열 수 없습니다.");
+        return;
+    }
+
+    QFileInfo fileInfo(*file);
+    QString fileName = fileInfo.fileName();
+
+    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+
+    // postId 추가
+    QHttpPart postIdPart;
+    postIdPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"postId\""));
+    postIdPart.setBody(QString::number(postId).toUtf8());
+    multiPart->append(postIdPart);
+
+    // 파일 추가
+    QHttpPart filePart;
+    filePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/octet-stream"));
+    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"file\"; filename=\"" + fileName + "\""));
+    filePart.setBodyDevice(file);
+    file->setParent(multiPart);
+    multiPart->append(filePart);
+
+    QNetworkRequest request(QUrl(tr(SERVER_URL) + tr("/upload-file")));
+    QNetworkReply *reply = uploadFileManager->post(request, multiPart);
+    multiPart->setParent(reply);
+
+    connect(reply, &QNetworkReply::uploadProgress, this, &HttpClient::uploadFileProgress);
+    connect(reply, &QNetworkReply::finished, [this, reply]() {
+        this->onUploadFileComplete(reply);
+    });
+}   
+
+void HttpClient::downloadFile(int fileId, const QString &savePath) {
+    QNetworkRequest request(QUrl(QString(tr(SERVER_URL) + tr("/download-file/%1").arg(fileId))));
+    QNetworkReply *reply = downloadFileManager->get(request);
+
+    reply->setProperty("savePath", savePath);
+
+    QFile *file = new QFile(savePath);
+    if (!file->open(QIODevice::WriteOnly)) {
+        emit downloadFileFailed("파일을 열 수 없습니다.");
+        return;
+    }
+
+    connect(reply, &QNetworkReply::downloadProgress, this, &HttpClient::downloadFileProgress);
+    connect(reply, &QNetworkReply::finished, [this, reply, file]() {
+        this->onDownloadFileComplete(reply);
+    });
 }
 
 // slots
@@ -298,6 +357,44 @@ void HttpClient::onDeleteUserResponse(QNetworkReply *reply)
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         emit deleteUserResponse(reply->readAll());
+    }
+    reply->deleteLater();
+}
+
+void HttpClient::onUploadFileProgress(qint64 bytesSent, qint64 bytesTotal)
+{
+    emit uploadFileProgress(bytesSent, bytesTotal);
+}
+
+void HttpClient::onUploadFileComplete(QNetworkReply *reply)
+{
+    if (reply->error() == QNetworkReply::NoError) {
+        emit uploadFileComplete(reply->readAll());
+    } else {
+        emit uploadFileFailed(reply->errorString());
+    }
+    reply->deleteLater();
+}
+
+void HttpClient::onDownloadFileProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+    emit downloadFileProgress(bytesReceived, bytesTotal);
+}
+
+void HttpClient::onDownloadFileComplete(QNetworkReply *reply)
+{
+    if (reply->error() == QNetworkReply::NoError) {
+        QString savePath = reply->property("savePath").toString();
+        QFile file(savePath);
+        if (file.open(QIODevice::WriteOnly)) {
+            file.write(reply->readAll());
+            file.close();
+            emit downloadFileComplete(savePath);
+        } else {
+            emit downloadFileFailed("파일을 열 수 없습니다.");
+        }
+    } else {
+        emit downloadFileFailed(reply->errorString());
     }
     reply->deleteLater();
 }

@@ -27,6 +27,9 @@ public:
     QNetworkAccessManager *deletePostManager;
     QNetworkAccessManager *deleteCommentManager;
     QNetworkAccessManager *deleteUserManager;
+    QNetworkAccessManager *uploadFileManager;
+    QNetworkAccessManager *downloadFileManager; 
+    
 
     void fetchAllPosts();
     void fetchPostById(int postId);
@@ -39,6 +42,9 @@ public:
     void deletePost(int postId);
     void deleteComment(int commentId);
     void deleteUser(const QString &user);
+    
+    void uploadFile(int postId, const QString &filePath);
+    void downloadFile(int fileId, const QString &savePath);
 
 signals:
     void allPostsFetched(QList<Post> postList);
@@ -55,6 +61,14 @@ signals:
     void deleteCommentResponse(QByteArray data);
     void deleteUserResponse(QByteArray data);
 
+    void uploadFileProgress(qint64 bytesSent, qint64 bytesTotal);
+    void uploadFileComplete(const QByteArray &response);
+    void uploadFileFailed(const QString &error);
+    void downloadFileProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void downloadFileComplete(const QString &filePath);
+    void downloadFileFailed(const QString &error);
+
+
 private slots:
     void onAllPostsFetched(QNetworkReply *reply);
     void onPostFetched(QNetworkReply *reply);
@@ -67,6 +81,12 @@ private slots:
     void onDeletePostResponse(QNetworkReply *reply);
     void onDeleteCommentResponse(QNetworkReply *reply);
     void onDeleteUserResponse(QNetworkReply *reply);
+
+    void onUploadFileProgress(qint64 bytesSent, qint64 bytesTotal);
+    void onUploadFileComplete(QNetworkReply *reply);
+    void onDownloadFileProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void onDownloadFileComplete(QNetworkReply *reply);
+
 
 private:
     explicit HttpClient(QObject *parent = nullptr);
