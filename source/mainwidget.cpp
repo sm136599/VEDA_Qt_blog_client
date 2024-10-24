@@ -11,6 +11,9 @@
 #include "comment.h"
 
 #include <QDebug>
+#include <QMessageBox>
+#include <QTimer>
+
 
 MainWidget::MainWidget(QWidget *parent)
     : QWidget(parent)
@@ -78,6 +81,11 @@ void MainWidget::setConnects() {
     connect(httpclient, &HttpClient::postFetched, this, [this](Post post) {
         if (postWidget != nullptr) {
             httpclient->fetchPostByIdManager->disconnect();
+            httpclient->uploadCommentManager->disconnect();
+            httpclient->editCommentManager->disconnect();
+            httpclient->deleteCommentManager->disconnect();
+            httpclient->editPostManager->disconnect();
+            httpclient->deletePostManager->disconnect();
             postWidget->disconnect();
             postWidget->hide();
             postWidget->deleteLater();
@@ -91,6 +99,7 @@ void MainWidget::setConnects() {
         });
         // 게시물 수정
         connect(postWidget, &PostWidget::editPost, [this](int postId, QString subject, QString description) {
+            qDebug() << postId << "번 게시물 수정";
             httpclient->editPost(postId, subject, description);
         });
         // 게시물 삭제
@@ -103,6 +112,7 @@ void MainWidget::setConnects() {
         });
         // 댓글 수정
         connect(postWidget, &PostWidget::editComment, [this](int commentId, QString description) {
+            qDebug() << commentId << "번 댓글 수정";
             httpclient->editComment(commentId, description);
         });
         // 댓글 삭제
@@ -114,25 +124,38 @@ void MainWidget::setConnects() {
     });
     // 게시물 수정 완료 -> 게시물 리스트, 게시물 업데이트
     connect(httpclient, &HttpClient::editPostResponse, this, [this](QByteArray data) {
-        updatePostList();
-        httpclient->fetchPostById(this->postWidget->getPostId());
+        QTimer::singleShot(200, this, [this]() {
+            httpclient->fetchPostById(this->postWidget->getPostId());
+            QTimer::singleShot(200, this, [this]() {
+                updatePostList();
+            });
+        });
     });
     // 게시물 삭제 완료 -> 게시물 리스트, 게시물 페이지
     connect(httpclient, &HttpClient::deletePostResponse, this, [this](QByteArray data) {
-        updatePostList();
-        this->ui->stackedWidget->setCurrentIndex(0);
+        QTimer::singleShot(200, this, [this]() {
+            updatePostList();
+            this->ui->stackedWidget->setCurrentIndex(0);
+        });
     });
     // 댓글 업로드 완료 -> 게시물 다시 받아오기
     connect(httpclient, &HttpClient::uploadCommentResponse, this, [this](QByteArray data) {
-        httpclient->fetchPostById(this->postWidget->getPostId());
+        QTimer::singleShot(200, this, [this]() {
+            httpclient->fetchPostById(this->postWidget->getPostId());
+        });
     });
     // 댓글 수정 완료 -> 게시물 다시 받아오기
     connect(httpclient, &HttpClient::editCommentResponse, this, [this](QByteArray data) {
-        httpclient->fetchPostById(this->postWidget->getPostId());
+        qDebug() << "댓글 수정";
+        QTimer::singleShot(200, this, [this]() {
+            httpclient->fetchPostById(this->postWidget->getPostId());
+        });
     });
     // 댓글 삭제 완료 -> 게시물 다시 받아오기
     connect(httpclient, &HttpClient::deleteCommentResponse, this, [this](QByteArray data) {
-        httpclient->fetchPostById(this->postWidget->getPostId());
+        QTimer::singleShot(200, this, [this]() {
+            httpclient->fetchPostById(this->postWidget->getPostId());
+        });
     });
     // 로그인 dialog 연결
     connect(ui->loginButton, &QPushButton::clicked, this, [this]() {
@@ -183,6 +206,28 @@ void MainWidget::setConnects() {
         updatePostList();
         this->ui->stackedWidget->setCurrentIndex(0);
     });
+
+    // 로그아웃
+    connect(ui->logoutButton, &QPushButton::clicked, this, [this]() {
+        this->username = "";
+        updateForGuest();
+        ui->stackedWidget->setCurrentIndex(0);
+    });
+
+    // 회원탈퇴
+    connect(ui->withdrawButton, &QPushButton::clicked, this, [this]() {
+        // 회원탈퇴 확인 메시지 
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "회원탈퇴", "정말로 회원탈퇴 하시겠습니까?", 
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            httpclient->deleteUser(this->username);
+            this->username = "";
+            updateForGuest();
+            ui->stackedWidget->setCurrentIndex(0);
+        }
+    });
+    
 }
 
 

@@ -14,10 +14,12 @@ PostWidget::PostWidget(Post post, QString user, QWidget *parent) :
     ui(new Ui::PostWidget)
 {
     ui->setupUi(this);
+    // post 정보 출력
     this->isEditing = false;
     this->post = post;
     ui->titleLineEdit->setText(post.subject);
     ui->textEdit->setText(post.description);
+    ui->writerLabel->setText(post.writer);
     for (Comment& comment : post.comments) {
         CommentWidget *commentWidget = new CommentWidget(comment, user);
         ui->scrollAreaWidgetContents->layout()->addWidget(commentWidget);

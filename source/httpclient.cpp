@@ -93,9 +93,9 @@ void HttpClient::uploadPost(const QString &subject, const QString &writer, const
 
 void HttpClient::editPost(int postId, const QString &subject, const QString &description)
 {
-    QNetworkRequest request(QUrl(QString(tr(SERVER_URL) + tr("/edit-post/%1").arg(postId))));
+    QNetworkRequest request(QUrl(QString(tr(SERVER_URL) + tr("/edit-post"))));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
+    qDebug() << "editPost" << postId << subject << description;
     QJsonObject json;
     json["postNumber"] = postId;
     json["subject"] = subject;
@@ -121,9 +121,9 @@ void HttpClient::uploadComment(int postId, const QString &writer, const QString 
 
 void HttpClient::editComment(int commentId, const QString &description)
 {
-    QNetworkRequest request(QUrl(QString(tr(SERVER_URL) + tr("/edit-comment/%1").arg(commentId))));
+    QNetworkRequest request(QUrl(QString(tr(SERVER_URL) + tr("/edit-comment"))));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
+    
     QJsonObject json;
     json["commentNumber"] = commentId;
     json["description"] = description;
