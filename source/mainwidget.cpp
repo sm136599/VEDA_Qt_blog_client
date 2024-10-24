@@ -19,6 +19,7 @@ MainWidget::MainWidget(QWidget *parent)
     ui->setupUi(this);
     postWidget = nullptr;
     postListWidget = nullptr;
+    writePostWidget = nullptr;
     // 사용자 초기화
     username = "";
     // 레이아웃 초기화
@@ -152,6 +153,35 @@ void MainWidget::setConnects() {
     connect(ui->registerButton, &QPushButton::clicked, this, [this]() {
         RegisterDialog registerDialog;
         registerDialog.exec();
+    });
+
+    // 새 글 작성
+    connect(ui->newPostButton, &QPushButton::clicked, this, [this]() {
+        if (this->writePostWidget != nullptr) {
+            httpclient->uploadPostManager->disconnect();
+            this->writePostWidget->disconnect();
+            this->writePostWidget->hide();
+            this->writePostWidget->deleteLater();
+            delete this->writePostWidget;
+        }
+        this->writePostWidget = new WritePostWidget();
+
+        connect(this->writePostWidget, &WritePostWidget::back, this, [this]() {
+            this->ui->stackedWidget->setCurrentIndex(0);
+        });
+
+        connect(this->writePostWidget, &WritePostWidget::uploadPost, [this](QString title, QString description) {
+            httpclient->uploadPost(title, this->username, description);
+        });
+        
+        this->ui->writePostPage->layout()->addWidget(this->writePostWidget);
+        this->ui->stackedWidget->setCurrentIndex(2);
+    });
+
+    // 새 글 업로드 완료
+    connect(httpclient, &HttpClient::uploadPostResponse, this, [this](QByteArray data) {
+        updatePostList();
+        this->ui->stackedWidget->setCurrentIndex(0);
     });
 }
 

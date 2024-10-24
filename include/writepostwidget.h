@@ -15,6 +15,10 @@ public:
     explicit WritePostWidget(QWidget *parent = nullptr);
     ~WritePostWidget();
 
+signals:
+   void back();
+   void uploadPost(QString title, QString description);
+
 private:
     Ui::WritePostWidget *ui;
 };

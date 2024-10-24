@@ -5,6 +5,7 @@
 
 class PostListWidget;
 class PostWidget;
+class WritePostWidget;
 
 namespace Ui {
 class MainWidget;
@@ -25,6 +26,7 @@ private:
 
     PostListWidget *postListWidget;
     PostWidget *postWidget;
+    WritePostWidget *writePostWidget;
 
     void setConnects();
     void setLayoutForStackedWidget();
