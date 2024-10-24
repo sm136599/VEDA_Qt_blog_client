@@ -174,9 +174,9 @@ void HttpClient::onAllPostsFetched(QNetworkReply *reply)
 
         for (const QJsonValue &post : posts) {
             Post postStruct;
-            postStruct.postNumber = post.toObject()["postID"].toInt();
-            postStruct.subject = post.toObject()["Title"].toString();
-            postStruct.writer = post.toObject()["Writer"].toString();
+            postStruct.postNumber = post.toObject()["postNumber"].toInt();
+            postStruct.subject = post.toObject()["subject"].toString();
+            postStruct.writer = post.toObject()["writer"].toString();
             postList.append(postStruct);
         }
 
