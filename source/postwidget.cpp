@@ -40,6 +40,7 @@ PostWidget::PostWidget(Post post, QString user, QWidget *parent) :
     }
 
     connect(ui->backButton, &QPushButton::clicked, [this]() {
+        qDebug() << "뒤로가기";
         emit back();
     });
     connect(ui->editButton, &QPushButton::clicked, [this]() {
