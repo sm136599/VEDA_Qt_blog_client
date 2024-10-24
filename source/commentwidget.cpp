@@ -41,6 +41,7 @@ CommentWidget::CommentWidget(Comment comment, QString user, QWidget *parent) :
         }
     });
     connect(ui->deleteButton, &QPushButton::clicked, [this]() {
+        qDebug() << this->comment.commentNumber << "번 댓글 삭제";
         emit deleteComment(this->comment.commentNumber);
     });
 }

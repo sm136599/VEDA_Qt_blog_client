@@ -17,7 +17,7 @@ RegisterDialog::RegisterDialog(QWidget *parent) :
     // 회원가입 버튼
     connect(ui->registerButton, &QPushButton::clicked, this, [this]() {
         if (this->isValidName && this->isValidPwCheck) {
-            httpclient->join(ui->idLineEdit->text(), ui->pwLineEdit->text(), ui->pwCheckLineEdit->text(), ui->nameLineEdit->text());
+            httpclient->join(ui->idLineEdit->text(), ui->pwLineEdit->text(), ui->nameLineEdit->text());
         }
     });
     // 회원가입 성공 시

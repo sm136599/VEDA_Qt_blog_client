@@ -65,6 +65,9 @@ void MainWidget::setConnects() {
         for (Post& post : postList) {
             postListWidget->addPostListItem(new PostListItemWidget(post.postNumber, post.subject, post.writer));
         }
+        connect(this->postListWidget, &PostListWidget::postClicked, this, [this](int postId) {
+            httpclient->fetchPostById(postId);
+        });
         ui->postListPage->layout()->addWidget(postListWidget);
 
         if (this->username == "") {
@@ -74,10 +77,6 @@ void MainWidget::setConnects() {
         } else {
             updateForMember();
         }
-    });
-    // 게시물 클릭 
-    connect(postListWidget, &PostListWidget::postClicked, this, [this](int postId) {
-        httpclient->fetchPostById(postId);
     });
     // 게시물 받아오기
     connect(httpclient, &HttpClient::postFetched, this, [this](Post post) {
@@ -129,15 +128,17 @@ void MainWidget::setConnects() {
     });
     // 로그인 dialog 연결
     connect(ui->loginButton, &QPushButton::clicked, this, [this]() {
-        LoginDialog loginDialog;
-        connect(&loginDialog, &LoginDialog::loginSucceed, this, [this](QString username) {
+        LoginDialog* loginDialog = new LoginDialog();
+        connect(loginDialog, &LoginDialog::loginSucceed, this, [this](QString username) {
+            qDebug() << username << "로그인 성공";
+            this->username = username;
             if (username == "admin") {
                 updateForAdmin();
             } else {
                 updateForMember();
             }
         });
-        loginDialog.exec();
+        loginDialog->exec();
     });
 
     //회원가입 dialog 연결
@@ -174,6 +175,8 @@ void MainWidget::updateForMember() {
     ui->newPostButton->show();
     ui->logoutButton->show();
     ui->withdrawButton->show();
+
+    postListWidget->enableClickEvent();
 }
 
 void MainWidget::updateForAdmin() {
@@ -183,6 +186,8 @@ void MainWidget::updateForAdmin() {
     ui->newPostButton->show();
     ui->logoutButton->show();
     ui->withdrawButton->show();
+
+    postListWidget->enableClickEvent();
 }
 
 void MainWidget::setUserLabel() {

@@ -26,6 +26,9 @@ LoginDialog::LoginDialog(QWidget *parent) :
         emit loginSucceed(username);
         this->close();
     });
+    connect(httpclient, &HttpClient::loginFailed, this, [this]() {
+        ui->loginStatusLabel->setText("아이디와 비밀번호를 확인해주세요.");
+    });
 }
 
 LoginDialog::~LoginDialog()
