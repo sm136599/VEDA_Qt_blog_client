@@ -35,8 +35,6 @@ MainWidget::MainWidget(QWidget *parent)
     //     postListWidget->addPostListItem(new PostListItemWidget(i, "제목", "작성자"));
     // }
 
-    // 화면 업데이트
-    updateForGuest();
 
     // 연결 초기화
     setConnects();
@@ -62,9 +60,19 @@ void MainWidget::setConnects() {
     connect(httpclient, &HttpClient::allPostsFetched, this, [this](QList<Post> postList) {
         postListWidget->hide();
         postListWidget->deleteLater();
+        delete postListWidget;
         postListWidget = new PostListWidget(ui->postListPage);
         for (Post& post : postList) {
             postListWidget->addPostListItem(new PostListItemWidget(post.postNumber, post.subject, post.writer));
+        }
+        ui->postListPage->layout()->addWidget(postListWidget);
+
+        if (this->username == "") {
+            updateForGuest();
+        } else if (this->username == "admin") {
+            updateForAdmin();
+        } else {
+            updateForMember();
         }
     });
     // 게시물 클릭 

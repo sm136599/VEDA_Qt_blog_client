@@ -17,6 +17,9 @@ public:
 
 private:
     Ui::RegisterDialog *ui;
+
+    bool isValidName;
+    bool isValidPwCheck;
 };
 
 #endif // REGISTERDIALOG_H

@@ -164,10 +164,7 @@ void HttpClient::deleteUser(const QString &user)
 void HttpClient::onAllPostsFetched(QNetworkReply *reply)
 {
     if (reply->error() == QNetworkReply::NoError) {
-        qDebug() << "all posts fetched";
-        qDebug() << reply->readAll();
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
-        
         QJsonArray posts = response["posts"].toArray();
 
         QList<Post> postList;
@@ -177,7 +174,7 @@ void HttpClient::onAllPostsFetched(QNetworkReply *reply)
             postStruct.postNumber = post.toObject()["postNumber"].toInt();
             postStruct.subject = post.toObject()["subject"].toString();
             postStruct.writer = post.toObject()["writer"].toString();
-            postList.append(postStruct);
+            postList.push_back(postStruct);
         }
 
         emit allPostsFetched(postList);
