@@ -32,16 +32,8 @@ MainWidget::MainWidget(QWidget *parent)
     // 게시물 리스트 업데이트
     updatePostList();
 
-    // for(int i = 0; i < 10; i++) {
-    //     postListWidget->addPostListItem(new PostListItemWidget(i, "제목", "작성자"));
-    // }
-
-
     // 연결 초기화
     setConnects();
-
-    // TODO : 로그인, 회원가입 dialog 연결
-    //        새 글 작성 구현
 }
 
 MainWidget::~MainWidget()
@@ -105,6 +97,10 @@ void MainWidget::setConnects() {
         connect(postWidget, &PostWidget::deletePost, [this](int postId) {
             httpclient->deletePost(postId);
         });
+        // 댓글 업로드
+        connect(postWidget, &PostWidget::uploadComment, [this](int postId, QString description) {
+            httpclient->uploadComment(postId, this->username, description);
+        });
         // 댓글 수정
         connect(postWidget, &PostWidget::editComment, [this](int commentId, QString description) {
             httpclient->editComment(commentId, description);
@@ -125,6 +121,10 @@ void MainWidget::setConnects() {
     connect(httpclient, &HttpClient::deletePostResponse, this, [this](QByteArray data) {
         updatePostList();
         this->ui->stackedWidget->setCurrentIndex(0);
+    });
+    // 댓글 업로드 완료 -> 게시물 다시 받아오기
+    connect(httpclient, &HttpClient::uploadCommentResponse, this, [this](QByteArray data) {
+        httpclient->fetchPostById(this->postWidget->getPostId());
     });
     // 댓글 수정 완료 -> 게시물 다시 받아오기
     connect(httpclient, &HttpClient::editCommentResponse, this, [this](QByteArray data) {

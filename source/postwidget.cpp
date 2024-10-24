@@ -61,6 +61,10 @@ PostWidget::PostWidget(Post post, QString user, QWidget *parent) :
     connect(ui->deleteButton, &QPushButton::clicked, [this]() {
         emit deletePost(this->post.postNumber);
     });
+
+    connect(ui->applyButton, &QPushButton::clicked, [this]() {
+        emit uploadComment(this->post.postNumber, ui->commentTextEdit->toPlainText());
+    });
 }
 
 PostWidget::~PostWidget()

@@ -26,6 +26,7 @@ signals:
     void deletePost(int postId);
     void editComment(int commentId, QString description);
     void deleteComment(int commentId);
+    void uploadComment(int postId, QString description);
 
 private:
     Ui::PostWidget *ui;
