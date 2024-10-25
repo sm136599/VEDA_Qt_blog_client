@@ -161,8 +161,8 @@ void MainWidget::setConnects() {
     });
     // 로그인 dialog 연결
     connect(ui->loginButton, &QPushButton::clicked, this, [this]() {
-        LoginDialog* loginDialog = new LoginDialog();
-        connect(loginDialog, &LoginDialog::loginSucceed, this, [this](QString username) {
+        LoginDialog loginDialog;
+        connect(&loginDialog, &LoginDialog::loginSucceed, this, [this](QString username) {
             qDebug() << username << "로그인 성공";
             this->username = username;
             if (username == "admin") {
@@ -171,7 +171,7 @@ void MainWidget::setConnects() {
                 updateForMember();
             }
         });
-        loginDialog->exec();
+        loginDialog.exec();
     });
 
     //회원가입 dialog 연결
