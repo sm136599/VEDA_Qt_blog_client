@@ -95,7 +95,11 @@ background-color: rgb(215, 215, 215);
         <property name="font">
          <font>
           <pointsize>12</pointsize>
+          <hintingpreference>PreferDefaultHinting</hintingpreference>
          </font>
+        </property>
+        <property name="echoMode">
+         <enum>QLineEdit::Password</enum>
         </property>
        </widget>
       </item>

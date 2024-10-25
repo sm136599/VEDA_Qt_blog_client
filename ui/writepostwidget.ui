@@ -27,7 +27,7 @@ background-color: white;
 padding: 8px;
 }</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
    <item>
     <widget class="QWidget" name="widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
@@ -45,6 +45,11 @@ padding: 8px;
       </property>
       <item>
        <widget class="QPushButton" name="backButton">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>뒤로가기</string>
         </property>
@@ -65,6 +70,11 @@ padding: 8px;
       </item>
       <item>
        <widget class="QPushButton" name="uploadFileButton">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>파일 업로드</string>
         </property>
@@ -72,6 +82,11 @@ padding: 8px;
       </item>
       <item>
        <widget class="QPushButton" name="uploadButton">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>게시하기</string>
         </property>

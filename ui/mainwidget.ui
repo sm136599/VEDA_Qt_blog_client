@@ -147,6 +147,11 @@ border: none;
          </item>
          <item>
           <widget class="QPushButton" name="registerButton">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>회원가입</string>
            </property>
@@ -154,6 +159,11 @@ border: none;
          </item>
          <item>
           <widget class="QPushButton" name="loginButton">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>로그인</string>
            </property>
@@ -161,6 +171,11 @@ border: none;
          </item>
          <item>
           <widget class="QPushButton" name="newPostButton">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>새글 작성</string>
            </property>
@@ -168,6 +183,11 @@ border: none;
          </item>
          <item>
           <widget class="QPushButton" name="logoutButton">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>로그아웃</string>
            </property>
@@ -175,6 +195,11 @@ border: none;
          </item>
          <item>
           <widget class="QPushButton" name="withdrawButton">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>회원 탈퇴</string>
            </property>

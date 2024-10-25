@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>292</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -20,7 +20,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget {
+   <string notr="true">QWidget &gt; QWidget{
 border: 2px solid black;
 border-radius: 10px;
 background-color: white;
@@ -53,7 +53,7 @@ border : none;
        <height>50</height>
       </size>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,0">
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,1,0,0">
       <item>
        <widget class="QLabel" name="postIdLabel">
         <property name="minimumSize">
@@ -76,6 +76,16 @@ border : none;
        </widget>
       </item>
       <item>
+       <widget class="Line" name="line">
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="postTitleLabel">
         <property name="font">
          <font>
@@ -84,6 +94,16 @@ border : none;
         </property>
         <property name="text">
          <string>제목</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>

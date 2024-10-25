@@ -14,7 +14,20 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QPushButton {
+border: 2px solid black;
+border-radius: 12px;
+background-color: white;
+padding: 8px;
+}
+
+QPushButton:hover {
+background-color: rgb(235, 235, 235);
+}
+
+QPushButton:pressed {
+background-color: rgb(215, 215, 215);
+}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
    <property name="spacing">
@@ -37,6 +50,11 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="backButton">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>뒤로가기</string>
         </property>
@@ -57,6 +75,11 @@
       </item>
       <item>
        <widget class="QPushButton" name="editButton">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>수정</string>
         </property>
@@ -64,6 +87,11 @@
       </item>
       <item>
        <widget class="QPushButton" name="deleteButton">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>삭제</string>
         </property>
@@ -90,7 +118,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-152</y>
         <width>583</width>
         <height>767</height>
        </rect>
@@ -114,12 +142,25 @@ border-radius: 15px;
 background-color: white;
 padding: 8px;
 }
+QPushButton {
+border: 2px solid black;
+border-radius: 12px;
+background-color: white;
+padding: 8px;
+}
+
+QPushButton:hover {
+background-color: rgb(235, 235, 235);
+}
+
+QPushButton:pressed {
+background-color: rgb(215, 215, 215);
+}
+
 QWidget {
 background-color: white;
 }
-QPushButton {
-background-color: none;
-}</string>
+</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,1,0">
        <item>
@@ -255,6 +296,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
             <property name="text">
              <string>댓글 달기</string>

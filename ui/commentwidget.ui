@@ -19,10 +19,21 @@ border:none;
 background-color: none;
 }
 
+
 QPushButton {
-background-color: none;
+border: 2px solid black;
+border-radius: 12px;
+background-color: white;
+padding: 8px;
 }
-</string>
+
+QPushButton:hover {
+background-color: rgb(235, 235, 235);
+}
+
+QPushButton:pressed {
+background-color: rgb(215, 215, 215);
+}</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
@@ -32,6 +43,11 @@ background-color: none;
        <width>50</width>
        <height>0</height>
       </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>작성자</string>
@@ -83,6 +99,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QPushButton" name="editButton">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>수정</string>
        </property>
@@ -90,6 +111,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </item>
      <item>
       <widget class="QPushButton" name="deleteButton">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>삭제</string>
        </property>
