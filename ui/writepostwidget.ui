@@ -64,6 +64,13 @@ padding: 8px;
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="uploadFileButton">
+        <property name="text">
+         <string>파일 업로드</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="uploadButton">
         <property name="text">
          <string>게시하기</string>

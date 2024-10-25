@@ -36,7 +36,15 @@ background-color: rgb(235, 235, 235);
 
 QPushButton:pressed {
 background-color: rgb(215, 215, 215);
-}</string>
+}
+
+QMessageBox {
+border: 2px dashed black;
+border-radius: 12px;
+background-color: white;
+padding: 8px;
+}
+</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
    <property name="spacing">
