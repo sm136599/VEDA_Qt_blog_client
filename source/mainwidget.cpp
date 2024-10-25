@@ -269,7 +269,7 @@ void MainWidget::updateForAdmin() {
     ui->loginButton->hide();
     ui->newPostButton->show();
     ui->logoutButton->show();
-    ui->withdrawButton->show();
+    ui->withdrawButton->hide();
 
     postListWidget->enableClickEvent();
 }

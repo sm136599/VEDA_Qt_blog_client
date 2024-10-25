@@ -66,6 +66,9 @@ PostWidget::PostWidget(Post post, QString user, QWidget *parent) :
     });
 
     connect(ui->applyButton, &QPushButton::clicked, [this]() {
+        if (ui->commentTextEdit->toPlainText().isEmpty()) {
+            return;
+        }
         emit uploadComment(this->post.postNumber, ui->commentTextEdit->toPlainText());
     });
 }
