@@ -33,6 +33,8 @@ private:
 
     Post post;
     bool isEditing;
+
+    QList<CommentWidget*> commentWidgetList;
 };
 
 #endif // POSTWIDGET_H

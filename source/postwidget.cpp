@@ -22,6 +22,7 @@ PostWidget::PostWidget(Post post, QString user, QWidget *parent) :
     ui->writerLabel->setText(post.writer);
     for (Comment& comment : post.comments) {
         CommentWidget *commentWidget = new CommentWidget(comment, user);
+        commentWidgetList.append(commentWidget);
         ui->scrollAreaWidgetContents->layout()->addWidget(commentWidget);
         connect(commentWidget, &CommentWidget::editComment, [this](int commentId, QString description) {
             emit editComment(commentId, description);
@@ -72,6 +73,12 @@ PostWidget::PostWidget(Post post, QString user, QWidget *parent) :
 PostWidget::~PostWidget()
 {
     delete ui;
+    for (CommentWidget* commentWidget : commentWidgetList) {
+        commentWidget->deleteLater();
+        if (commentWidget != nullptr) {
+            delete commentWidget;
+        }
+    }
 }
 
 int PostWidget::getPostId()

@@ -16,6 +16,12 @@ PostListWidget::PostListWidget(QWidget *parent)
 PostListWidget::~PostListWidget()
 {
     delete ui;
+    for (PostListItemWidget* postListItemWidget : postListItemWidgetList) {
+        postListItemWidget->deleteLater();
+        if (postListItemWidget != nullptr) {
+            delete postListItemWidget;
+        }
+    }
 }
 
 // public

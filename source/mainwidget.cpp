@@ -32,6 +32,8 @@ MainWidget::MainWidget(QWidget *parent)
     // 게시물 페이지 연결
     ui->postListPage->layout()->addWidget(postListWidget);
     
+    updateForGuest();
+
     // 게시물 리스트 업데이트
     updatePostList();
 
