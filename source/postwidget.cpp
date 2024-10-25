@@ -78,9 +78,6 @@ PostWidget::~PostWidget()
     delete ui;
     for (CommentWidget* commentWidget : commentWidgetList) {
         commentWidget->deleteLater();
-        if (commentWidget != nullptr) {
-            delete commentWidget;
-        }
     }
 }
 
