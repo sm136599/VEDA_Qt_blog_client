@@ -18,25 +18,15 @@ MainWidget::MainWidget(QWidget *parent)
     , ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
-    // 레이아웃 초기화
-    setLayoutForStackedWidget();
-
-    postWidget = new PostWidget();
-    ui->postPage->layout()->addWidget(postWidget);
-
-    postListWidget = new PostListWidget();
-    ui->postListPage->layout()->addWidget(postListWidget);
-
-    writePostWidget = new WritePostWidget();
-    ui->writePostPage->layout()->addWidget(writePostWidget);
+    // 페이지 초기화
+    setPages();
 
     // 사용자 초기화
     username = "";
-    
-    updateForGuest();
+    updateMode();
 
     // 게시물 리스트 업데이트
-    updatePostList();
+    httpclient->fetchAllPosts();
 
     // 연결 초기화
     setConnects();
@@ -54,25 +44,20 @@ MainWidget::~MainWidget()
 
 // private
 void MainWidget::setConnects() {
+    // 게시물 목록----------------------------------------------------------
     // 모든 게시물 받아오기
     connect(httpclient, &HttpClient::allPostsFetched, this, [=](QList<Post> postList) {
         postListWidget->clearPostList();
         postListWidget->addPostListItemList(postList);      
 
-        if (this->username == "") {
-            updateForGuest();
-        } else if (this->username == "admin") {
-            updateForAdmin();
-        } else {
-            updateForMember();
-        }
+        updateMode();
     });
     connect(this->postListWidget, &PostListWidget::postClicked, this, [this](int postId) {
         QTimer::singleShot(200, this, [=]() {
             httpclient->fetchPostById(postId);
         });
     });
-
+    // 게시물--------------------------------------------------------------
     // 게시물 받아오기
     connect(httpclient, &HttpClient::postFetched, this, [=](Post post) {
         postWidget->clearPost();
@@ -120,14 +105,14 @@ void MainWidget::setConnects() {
         QTimer::singleShot(200, this, [this]() {
             httpclient->fetchPostById(this->postWidget->getPostId());
             QTimer::singleShot(200, this, [this]() {
-                updatePostList();
+                httpclient->fetchAllPosts();
             });
         });
     });
     // 게시물 삭제 완료 -> 게시물 리스트, 게시물 페이지
     connect(httpclient, &HttpClient::deletePostResponse, this, [=](QByteArray data) {
         QTimer::singleShot(200, this, [this]() {
-            updatePostList();
+            httpclient->fetchAllPosts();
             this->ui->stackedWidget->setCurrentIndex(0);
         });
     });
@@ -150,17 +135,14 @@ void MainWidget::setConnects() {
         });
     });
 
+    // 로그인, 회원가입----------------------------------------------------------
     // 로그인 dialog 연결
     connect(ui->loginButton, &QPushButton::clicked, this, [this]() {
         LoginDialog loginDialog;
         connect(&loginDialog, &LoginDialog::loginSucceed, this, [=](QString username) {
             qDebug() << username << "로그인 성공";
             this->username = username;
-            if (username == "admin") {
-                updateForAdmin();
-            } else {
-                updateForMember();
-            }
+            updateMode();
         });
         loginDialog.exec();
     });
@@ -171,6 +153,7 @@ void MainWidget::setConnects() {
         registerDialog.exec();
     });
 
+    // 새 글 작성----------------------------------------------------------
     // 새 글 작성
     connect(ui->newPostButton, &QPushButton::clicked, this, [=]() {
         writePostWidget->clear();
@@ -186,14 +169,14 @@ void MainWidget::setConnects() {
     });
     // 새 글 업로드 완료
     connect(httpclient, &HttpClient::uploadPostResponse, this, [=](QByteArray data) {
-        updatePostList();
-        this->ui->stackedWidget->setCurrentIndex(0);
+        httpclient->fetchAllPosts();
+        ui->stackedWidget->setCurrentIndex(0);
     });
 
     // 로그아웃
     connect(ui->logoutButton, &QPushButton::clicked, this, [=]() {
         this->username = "";
-        updateForGuest();
+        updateMode();
         ui->stackedWidget->setCurrentIndex(0);
     });
 
@@ -205,38 +188,56 @@ void MainWidget::setConnects() {
                                       QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::Yes) {
             httpclient->deleteUser(this->username);
-            this->username = "";
-            updateForGuest();
-            ui->stackedWidget->setCurrentIndex(0);
         }
     });
-    
+    // 회원탈퇴 완료
+    connect(httpclient, &HttpClient::deleteUserResponse, this, [=](QByteArray data) {
+        QMessageBox::information(this, "회원탈퇴", "회원탈퇴가 완료되었습니다.");
+        this->username = "";
+        updateMode();
+    });
 }
 
 
-void MainWidget::setLayoutForStackedWidget() {
-    if (!ui->postListPage->layout())
-        ui->postListPage->setLayout(new QVBoxLayout());
-    if (!ui->postPage->layout())
-        ui->postPage->setLayout(new QVBoxLayout());
-    if (!ui->writePostPage->layout())
-        ui->writePostPage->setLayout(new QVBoxLayout());
+void MainWidget::setPages() {
+    ui->postListPage->setLayout(new QVBoxLayout());
+    ui->postPage->setLayout(new QVBoxLayout());
+    ui->writePostPage->setLayout(new QVBoxLayout());
+    
+    postWidget = new PostWidget();
+    ui->postPage->layout()->addWidget(postWidget);
+
+    postListWidget = new PostListWidget();
+    ui->postListPage->layout()->addWidget(postListWidget);
+
+    writePostWidget = new WritePostWidget();
+    ui->writePostPage->layout()->addWidget(writePostWidget);
+}
+
+void MainWidget::updateMode() {
+    setUserLabel();
+    if (username == "") {
+        updateForGuest();
+    } else if (username == "admin") {
+        updateForAdmin();
+    } else {
+        updateForMember();
+    }
 }
 
 void MainWidget::updateForGuest() {
-    username = "";
-    setUserLabel();
     ui->registerButton->show();
     ui->loginButton->show();
     ui->newPostButton->hide();
     ui->logoutButton->hide();
     ui->withdrawButton->hide();
+
     postListWidget->disableClickEvent();
+
     ui->stackedWidget->setCurrentIndex(0);
 }
 
 void MainWidget::updateForMember() {
-    setUserLabel();
     ui->registerButton->hide();
     ui->loginButton->hide();
     ui->newPostButton->show();
@@ -247,7 +248,6 @@ void MainWidget::updateForMember() {
 }
 
 void MainWidget::updateForAdmin() {
-    setUserLabel();
     ui->registerButton->hide();
     ui->loginButton->hide();
     ui->newPostButton->show();
@@ -265,8 +265,4 @@ void MainWidget::setUserLabel() {
     } else {
         ui->userLabel->setText(username);
     }   
-}
-
-void MainWidget::updatePostList() {
-    httpclient->fetchAllPosts();
 }
