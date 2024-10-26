@@ -25,6 +25,20 @@ HttpClient::HttpClient(QObject *parent) : QObject(parent)
     deletePostManager = new QNetworkAccessManager(this);
     deleteCommentManager = new QNetworkAccessManager(this);
     deleteUserManager = new QNetworkAccessManager(this);
+
+    // connect 모아두기
+    connect(fetchAllPostsManager, &QNetworkAccessManager::finished, this, &HttpClient::onAllPostsFetched);
+    connect(fetchPostByIdManager, &QNetworkAccessManager::finished, this, &HttpClient::onPostFetched);
+    connect(joinManager, &QNetworkAccessManager::finished, this, &HttpClient::onJoinResponse);
+    connect(loginManager, &QNetworkAccessManager::finished, this, &HttpClient::onLoginResponse);
+    connect(uploadPostManager, &QNetworkAccessManager::finished, this, &HttpClient::onUploadPostResponse);
+    connect(editPostManager, &QNetworkAccessManager::finished, this, &HttpClient::onEditPostResponse);
+    connect(uploadCommentManager, &QNetworkAccessManager::finished, this, &HttpClient::onUploadCommentResponse);
+    connect(editCommentManager, &QNetworkAccessManager::finished, this, &HttpClient::onEditCommentResponse);
+    connect(deletePostManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeletePostResponse);
+    connect(deleteCommentManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeleteCommentResponse);
+    connect(deleteUserManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeleteUserResponse);
+
 }
 
 HttpClient* HttpClient::getInstance()
@@ -44,14 +58,12 @@ QJsonObject HttpClient::byteArrayToJsonObject(const QByteArray &data)
 void HttpClient::fetchAllPosts()
 {
     QNetworkRequest request(QUrl(tr(SERVER_URL) + tr("/get-all-post")));
-    connect(fetchAllPostsManager, &QNetworkAccessManager::finished, this, &HttpClient::onAllPostsFetched);
     fetchAllPostsManager->get(request);
 }
 
 void HttpClient::fetchPostById(int postId)
 {
     QNetworkRequest request(QUrl(QString(tr(SERVER_URL) + tr("/get-post/%1").arg(postId))));
-    connect(fetchPostByIdManager, &QNetworkAccessManager::finished, this, &HttpClient::onPostFetched);
     fetchPostByIdManager->get(request);
 }
 
@@ -65,7 +77,6 @@ void HttpClient::join(const QString &loginId, const QString &password, const QSt
     json["password"] = password;
     json["name"] = name;
 
-    connect(joinManager, &QNetworkAccessManager::finished, this, &HttpClient::onJoinResponse);
     joinManager->post(request, QJsonDocument(json).toJson());
 }
 
@@ -78,7 +89,6 @@ void HttpClient::login(const QString &loginId, const QString &password)
     json["loginId"] = loginId;
     json["password"] = password;
 
-    connect(loginManager, &QNetworkAccessManager::finished, this, &HttpClient::onLoginResponse);
     loginManager->post(request, QJsonDocument(json).toJson());
 }
 
@@ -92,7 +102,6 @@ void HttpClient::uploadPost(const QString &subject, const QString &writer, const
     json["writer"] = writer;
     json["description"] = description;
 
-    connect(uploadPostManager, &QNetworkAccessManager::finished, this, &HttpClient::onUploadPostResponse);
     uploadPostManager->post(request, QJsonDocument(json).toJson());
 }
 
@@ -106,7 +115,6 @@ void HttpClient::editPost(int postId, const QString &subject, const QString &des
     json["subject"] = subject;
     json["description"] = description;
 
-    connect(editPostManager, &QNetworkAccessManager::finished, this, &HttpClient::onEditPostResponse);
     editPostManager->post(request, QJsonDocument(json).toJson());
 }
 
@@ -120,7 +128,6 @@ void HttpClient::uploadComment(int postId, const QString &writer, const QString 
     json["writer"] = writer;
     json["description"] = description;
 
-    connect(uploadCommentManager, &QNetworkAccessManager::finished, this, &HttpClient::onUploadCommentResponse);
     uploadCommentManager->post(request, QJsonDocument(json).toJson());
 }
 
@@ -133,7 +140,6 @@ void HttpClient::editComment(int commentId, const QString &description)
     json["commentNumber"] = commentId;
     json["description"] = description;
 
-    connect(editCommentManager, &QNetworkAccessManager::finished, this, &HttpClient::onEditCommentResponse);
     editCommentManager->post(request, QJsonDocument(json).toJson());
 }
 
@@ -145,7 +151,6 @@ void HttpClient::deletePost(int postId)
     QJsonObject json;
     json["postNumber"] = postId;
 
-    connect(deletePostManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeletePostResponse);
     deletePostManager->post(request, QJsonDocument(json).toJson());
 }
 
@@ -157,7 +162,6 @@ void HttpClient::deleteComment(int commentId)
     QJsonObject json;
     json["commentNumber"] = commentId;
 
-    connect(deleteCommentManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeleteCommentResponse);
     deleteCommentManager->post(request, QJsonDocument(json).toJson());
 }
 
@@ -169,7 +173,6 @@ void HttpClient::deleteUser(const QString &user)
     QJsonObject json;
     json["user"] = user;
 
-    connect(deleteUserManager, &QNetworkAccessManager::finished, this, &HttpClient::onDeleteUserResponse);
     deleteUserManager->post(request, QJsonDocument(json).toJson());
 }
 
@@ -231,6 +234,7 @@ void HttpClient::downloadFile(int fileId, const QString &savePath) {
 
 void HttpClient::onAllPostsFetched(QNetworkReply *reply)
 {
+    qDebug() << "onAllPostsFetched";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         QJsonArray posts = response["posts"].toArray();
@@ -252,6 +256,7 @@ void HttpClient::onAllPostsFetched(QNetworkReply *reply)
 
 void HttpClient::onPostFetched(QNetworkReply *reply)
 {
+    qDebug() << "onPostFetched";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         Post post;
@@ -274,6 +279,7 @@ void HttpClient::onPostFetched(QNetworkReply *reply)
 
 void HttpClient::onJoinResponse(QNetworkReply *reply)
 {
+    qDebug() << "onJoinResponse";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         if (response["result"].toString() == "success") {
@@ -287,6 +293,7 @@ void HttpClient::onJoinResponse(QNetworkReply *reply)
 
 void HttpClient::onLoginResponse(QNetworkReply *reply)
 {
+    qDebug() << "onLoginResponse";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         if (response["user"].toString() != "") {
@@ -300,6 +307,7 @@ void HttpClient::onLoginResponse(QNetworkReply *reply)
 
 void HttpClient::onUploadPostResponse(QNetworkReply *reply)
 {
+    qDebug() << "onUploadPostResponse";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         emit uploadPostResponse(reply->readAll());
@@ -309,6 +317,7 @@ void HttpClient::onUploadPostResponse(QNetworkReply *reply)
 
 void HttpClient::onEditPostResponse(QNetworkReply *reply)
 {
+    qDebug() << "onEditPostResponse";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         emit editPostResponse(reply->readAll());
@@ -318,6 +327,7 @@ void HttpClient::onEditPostResponse(QNetworkReply *reply)
 
 void HttpClient::onUploadCommentResponse(QNetworkReply *reply)
 {
+    qDebug() << "onUploadCommentResponse";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         emit uploadCommentResponse(reply->readAll());
@@ -327,6 +337,7 @@ void HttpClient::onUploadCommentResponse(QNetworkReply *reply)
 
 void HttpClient::onEditCommentResponse(QNetworkReply *reply)
 {
+    qDebug() << "onEditCommentResponse";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         emit editCommentResponse(reply->readAll());
@@ -336,6 +347,7 @@ void HttpClient::onEditCommentResponse(QNetworkReply *reply)
 
 void HttpClient::onDeletePostResponse(QNetworkReply *reply)
 {
+    qDebug() << "onDeletePostResponse";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         emit deletePostResponse(reply->readAll());
@@ -345,6 +357,7 @@ void HttpClient::onDeletePostResponse(QNetworkReply *reply)
 
 void HttpClient::onDeleteCommentResponse(QNetworkReply *reply)
 {
+    qDebug() << "onDeleteCommentResponse";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         emit deleteCommentResponse(reply->readAll());
@@ -354,6 +367,7 @@ void HttpClient::onDeleteCommentResponse(QNetworkReply *reply)
 
 void HttpClient::onDeleteUserResponse(QNetworkReply *reply)
 {
+    qDebug() << "onDeleteUserResponse";
     if (reply->error() == QNetworkReply::NoError) {
         QJsonObject response = byteArrayToJsonObject(reply->readAll());
         emit deleteUserResponse(reply->readAll());

@@ -7,7 +7,8 @@
 
 #include "post.h"
 
-#define SERVER_URL "http://192.168.0.85:8000"
+// #define SERVER_URL "http://192.168.0.85:8000"
+#define SERVER_URL "http://192.168.56.101:8000"
 #define httpclient HttpClient::getInstance()
 
 class HttpClient : public QObject
@@ -15,21 +16,7 @@ class HttpClient : public QObject
     Q_OBJECT
 
 public:
-    static HttpClient* getInstance();
-    QNetworkAccessManager *fetchAllPostsManager;
-    QNetworkAccessManager *fetchPostByIdManager;
-    QNetworkAccessManager *joinManager;
-    QNetworkAccessManager *loginManager;
-    QNetworkAccessManager *uploadPostManager;
-    QNetworkAccessManager *editPostManager;
-    QNetworkAccessManager *uploadCommentManager;
-    QNetworkAccessManager *editCommentManager;
-    QNetworkAccessManager *deletePostManager;
-    QNetworkAccessManager *deleteCommentManager;
-    QNetworkAccessManager *deleteUserManager;
-    QNetworkAccessManager *uploadFileManager;
-    QNetworkAccessManager *downloadFileManager; 
-    
+    static HttpClient* getInstance();    
 
     void fetchAllPosts();
     void fetchPostById(int postId);
@@ -91,6 +78,21 @@ private slots:
 private:
     explicit HttpClient(QObject *parent = nullptr);
     static HttpClient* instance;
+    
+    QNetworkAccessManager *fetchAllPostsManager;
+    QNetworkAccessManager *fetchPostByIdManager;
+    QNetworkAccessManager *joinManager;
+    QNetworkAccessManager *loginManager;
+    QNetworkAccessManager *uploadPostManager;
+    QNetworkAccessManager *editPostManager;
+    QNetworkAccessManager *uploadCommentManager;
+    QNetworkAccessManager *editCommentManager;
+    QNetworkAccessManager *deletePostManager;
+    QNetworkAccessManager *deleteCommentManager;
+    QNetworkAccessManager *deleteUserManager;
+    QNetworkAccessManager *uploadFileManager;
+    QNetworkAccessManager *downloadFileManager; 
+
     QJsonObject byteArrayToJsonObject(const QByteArray& data);
 };
 
