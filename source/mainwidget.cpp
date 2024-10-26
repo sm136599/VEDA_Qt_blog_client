@@ -21,11 +21,12 @@ MainWidget::MainWidget(QWidget *parent)
     // 레이아웃 초기화
     setLayoutForStackedWidget();
 
-    postWidget = nullptr;
+    postWidget = new PostWidget();
+    ui->postPage->layout()->addWidget(postWidget);
 
     postListWidget = new PostListWidget();
     ui->postListPage->layout()->addWidget(postListWidget);
-    
+
     writePostWidget = nullptr;
     // 사용자 초기화
     username = "";
@@ -53,7 +54,6 @@ MainWidget::~MainWidget()
 void MainWidget::setConnects() {
     // 모든 게시물 받아오기
     connect(httpclient, &HttpClient::allPostsFetched, this, [=](QList<Post> postList) {
-        httpclient->fetchAllPostsManager->disconnect();
         postListWidget->clearPostList();
         postListWidget->addPostListItemList(postList);      
 
@@ -70,60 +70,48 @@ void MainWidget::setConnects() {
             httpclient->fetchPostById(postId);
         });
     });
+
     // 게시물 받아오기
     connect(httpclient, &HttpClient::postFetched, this, [=](Post post) {
-        httpclient->fetchPostByIdManager->disconnect();
-        httpclient->uploadCommentManager->disconnect();
-        httpclient->editCommentManager->disconnect();
-        httpclient->deleteCommentManager->disconnect();
-        httpclient->editPostManager->disconnect();
-        httpclient->deletePostManager->disconnect();
-        if (postWidget != nullptr) {
-            postWidget->hide();
-            postWidget->setParent(nullptr);
-            postWidget->disconnect();
-            delete postWidget;
-            postWidget = nullptr;
-        }
-        postWidget = new PostWidget(post, username, this->ui->postPage);
-        // 게시물 뒤로가기
-        connect(postWidget, &PostWidget::back, this, [=]() {
-            this->ui->stackedWidget->setCurrentIndex(0);
-        });
-        // 게시물 수정
-        connect(postWidget, &PostWidget::editPost, [=](int postId, QString subject, QString description) {
-            qDebug() << postId << "번 게시물 수정";
-            QTimer::singleShot(200, this, [=]() {
-                httpclient->editPost(postId, subject, description);
-            });
-        });
-        // 게시물 삭제
-        connect(postWidget, &PostWidget::deletePost, [=](int postId) {
-            QTimer::singleShot(200, this, [=]() {
-                httpclient->deletePost(postId);
-            });
-        });
-        // 댓글 업로드
-        connect(postWidget, &PostWidget::uploadComment, [=](int postId, QString description) {
-            QTimer::singleShot(200, this, [=]() {
-                httpclient->uploadComment(postId, this->username, description);
-            });
-        });
-        // 댓글 수정
-        connect(postWidget, &PostWidget::editComment, [=](int commentId, QString description) {
-            qDebug() << commentId << "번 댓글 수정";
-            QTimer::singleShot(200, this, [=]() {
-                httpclient->editComment(commentId, description);
-            });
-        });
-        // 댓글 삭제
-        connect(postWidget, &PostWidget::deleteComment, [=](int commentId) {
-            QTimer::singleShot(200, this, [=]() {
-                httpclient->deleteComment(commentId);
-            });
-        });
-        ui->postPage->layout()->addWidget(postWidget);
+        postWidget->clearPost();
+        postWidget->setPost(post, this->username);
         ui->stackedWidget->setCurrentIndex(1);
+    });
+    // 게시물 뒤로가기
+    connect(postWidget, &PostWidget::back, this, [=]() {
+        this->ui->stackedWidget->setCurrentIndex(0);
+    });
+    // 게시물 수정
+    connect(postWidget, &PostWidget::editPost, [=](int postId, QString subject, QString description) {
+        qDebug() << postId << "번 게시물 수정";
+        QTimer::singleShot(200, this, [=]() {
+            httpclient->editPost(postId, subject, description);
+        });
+    });
+    // 게시물 삭제
+    connect(postWidget, &PostWidget::deletePost, [=](int postId) {
+        QTimer::singleShot(200, this, [=]() {
+            httpclient->deletePost(postId);
+        });
+    });
+    // 댓글 업로드
+    connect(postWidget, &PostWidget::uploadComment, [=](int postId, QString description) {
+        QTimer::singleShot(200, this, [=]() {
+            httpclient->uploadComment(postId, this->username, description);
+        });
+    });
+    // 댓글 수정
+    connect(postWidget, &PostWidget::editComment, [=](int commentId, QString description) {
+        qDebug() << commentId << "번 댓글 수정";
+        QTimer::singleShot(200, this, [=]() {
+            httpclient->editComment(commentId, description);
+        });
+    });
+    // 댓글 삭제
+    connect(postWidget, &PostWidget::deleteComment, [=](int commentId) {
+        QTimer::singleShot(200, this, [=]() {
+            httpclient->deleteComment(commentId);
+        });
     });
     // 게시물 수정 완료 -> 게시물 리스트, 게시물 업데이트
     connect(httpclient, &HttpClient::editPostResponse, this, [=](QByteArray data) {
@@ -149,7 +137,6 @@ void MainWidget::setConnects() {
     });
     // 댓글 수정 완료 -> 게시물 다시 받아오기
     connect(httpclient, &HttpClient::editCommentResponse, this, [=](QByteArray data) {
-        qDebug() << "댓글 수정";
         QTimer::singleShot(200, this, [this]() {
             httpclient->fetchPostById(this->postWidget->getPostId());
         });
@@ -160,6 +147,7 @@ void MainWidget::setConnects() {
             httpclient->fetchPostById(this->postWidget->getPostId());
         });
     });
+
     // 로그인 dialog 연결
     connect(ui->loginButton, &QPushButton::clicked, this, [this]() {
         LoginDialog loginDialog;
