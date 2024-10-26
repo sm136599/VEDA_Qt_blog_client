@@ -27,7 +27,9 @@ MainWidget::MainWidget(QWidget *parent)
     postListWidget = new PostListWidget();
     ui->postListPage->layout()->addWidget(postListWidget);
 
-    writePostWidget = nullptr;
+    writePostWidget = new WritePostWidget();
+    ui->writePostPage->layout()->addWidget(writePostWidget);
+
     // 사용자 초기화
     username = "";
     
@@ -171,28 +173,17 @@ void MainWidget::setConnects() {
 
     // 새 글 작성
     connect(ui->newPostButton, &QPushButton::clicked, this, [=]() {
-        if (writePostWidget != nullptr) {
-            httpclient->uploadPostManager->disconnect();
-            writePostWidget->hide();
-            writePostWidget->setParent(nullptr);
-            writePostWidget->disconnect();
-            delete writePostWidget;
-            writePostWidget = nullptr;
-        }
-        writePostWidget = new WritePostWidget();
-
-        connect(this->writePostWidget, &WritePostWidget::back, this, [=]() {
-            ui->stackedWidget->setCurrentIndex(0);
-        });
-
-        connect(this->writePostWidget, &WritePostWidget::uploadPost, [=](QString title, QString description) {
-            httpclient->uploadPost(title, this->username, description);
-        });
-        
-        ui->writePostPage->layout()->addWidget(this->writePostWidget);
+        writePostWidget->clear();
         ui->stackedWidget->setCurrentIndex(2);
     });
-
+    // 새 글 작성 취소
+    connect(writePostWidget, &WritePostWidget::back, this, [=]() {
+        ui->stackedWidget->setCurrentIndex(0);
+    });
+    // 새 글 업로드
+    connect(writePostWidget, &WritePostWidget::uploadPost, [=](QString title, QString description) {
+        httpclient->uploadPost(title, this->username, description);
+    });
     // 새 글 업로드 완료
     connect(httpclient, &HttpClient::uploadPostResponse, this, [=](QByteArray data) {
         updatePostList();
