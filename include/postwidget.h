@@ -15,10 +15,12 @@ class PostWidget : public QWidget
 
 public:
     explicit PostWidget(QWidget *parent = nullptr);
-    explicit PostWidget(Post post, QString user, QWidget *parent = nullptr);
     ~PostWidget();
 
     int getPostId();
+    void clearPost();
+    void setPost(const Post& post, QString user);
+    void addComment(const Comment& comment, QString user);
 
 signals:
     void back();

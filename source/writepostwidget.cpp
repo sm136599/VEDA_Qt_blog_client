@@ -23,3 +23,9 @@ WritePostWidget::~WritePostWidget()
 {
     delete ui;
 }
+
+// public
+void WritePostWidget::clear() {
+    ui->titleLineEdit->clear();
+    ui->descriptionTextEdit->clear();
+}
