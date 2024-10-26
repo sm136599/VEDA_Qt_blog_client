@@ -2,6 +2,7 @@
 #define POSTLISTWIDGET_H
 
 #include <QWidget>
+#include "post.h"
 
 class PostListItemWidget;
 
@@ -18,6 +19,10 @@ public:
     ~PostListWidget();
 
     void addPostListItem(PostListItemWidget *postListItemWidget);
+    void addPostListItem(const Post& post);
+    void addPostListItemList(const QList<Post>& postList);
+    void clearPostList();
+
     void enableClickEvent();
     void disableClickEvent();
 

@@ -1,7 +1,6 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 #include "postlistwidget.h"
-#include "postlistitemwidget.h"
 #include "postwidget.h"
 #include "writepostwidget.h"
 #include "logindialog.h"
@@ -19,17 +18,17 @@ MainWidget::MainWidget(QWidget *parent)
     , ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
+    // 레이아웃 초기화
+    setLayoutForStackedWidget();
+
     postWidget = nullptr;
-    postListWidget = nullptr;
+
+    postListWidget = new PostListWidget();
+    ui->postListPage->layout()->addWidget(postListWidget);
+    
     writePostWidget = nullptr;
     // 사용자 초기화
     username = "";
-    // 레이아웃 초기화
-    setLayoutForStackedWidget();
-    // 게시물 리스트 위젯 생성
-    postListWidget = new PostListWidget(ui->postListPage);
-    // 게시물 페이지 연결
-    ui->postListPage->layout()->addWidget(postListWidget);
     
     updateForGuest();
 
@@ -55,23 +54,8 @@ void MainWidget::setConnects() {
     // 모든 게시물 받아오기
     connect(httpclient, &HttpClient::allPostsFetched, this, [=](QList<Post> postList) {
         httpclient->fetchAllPostsManager->disconnect();
-        if (postListWidget != nullptr) {
-            postListWidget->hide();
-            postListWidget->setParent(nullptr);
-            postListWidget->disconnect();
-            delete postListWidget;
-            postListWidget = nullptr;
-        }
-        postListWidget = new PostListWidget(ui->postListPage);
-        for (Post& post : postList) {
-            postListWidget->addPostListItem(new PostListItemWidget(post.postNumber, post.subject, post.writer));
-        }
-        connect(this->postListWidget, &PostListWidget::postClicked, this, [this](int postId) {
-            QTimer::singleShot(200, this, [=]() {
-                httpclient->fetchPostById(postId);
-            });
-        });
-        ui->postListPage->layout()->addWidget(postListWidget);
+        postListWidget->clearPostList();
+        postListWidget->addPostListItemList(postList);      
 
         if (this->username == "") {
             updateForGuest();
@@ -80,6 +64,11 @@ void MainWidget::setConnects() {
         } else {
             updateForMember();
         }
+    });
+    connect(this->postListWidget, &PostListWidget::postClicked, this, [this](int postId) {
+        QTimer::singleShot(200, this, [=]() {
+            httpclient->fetchPostById(postId);
+        });
     });
     // 게시물 받아오기
     connect(httpclient, &HttpClient::postFetched, this, [=](Post post) {
